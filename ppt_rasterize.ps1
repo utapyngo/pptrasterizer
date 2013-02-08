@@ -86,7 +86,6 @@ try {
             $dummy = $slide.Shapes.AddPicture((Join-Path $slidesPath $fn), $false, $true, 0, 0)
             foreach ($member in $transitionMembers) {
                 if ($transitions[$i].contains($member)) {
-                    # setattr(slide.SlideShowTransition, member, transitions[i][member])
                     Invoke-Expression ('$' + "slide.SlideShowTransition.$member = " + $transitions[$i][$member])
                 }
             }
