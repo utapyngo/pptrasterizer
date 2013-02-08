@@ -9,9 +9,14 @@ if not exist !powershell! (
 )
 
 if not exist %cd%\ppt_rasterize.ps1 (
-    echo %cd%\ppt_rasterize.ps1 not found
-    echo Please unpack everything, not just install.cmd
-    goto :eof
+    echo %cd%\ppt_rasterize.ps1 not found.
+    echo Trying to download...
+    powershell -command "(New-Object Net.WebClient).DownloadFile('https://raw.github.com/utapyngo/ppt_rasterize/master/ppt_rasterize.ps1', 'ppt_rasterize.ps1')"
+    if errorlevel 1 (
+        echo Could not download.
+        echo Please unpack everything, not just install.cmd.
+        goto :eof
+    )
 )
 
 for %%v in (Show.8 SlideShow.8 Show.12 SlideShow.12 ShowMacroEnabled.12 SlideShowMacroEnabled.12) do (
