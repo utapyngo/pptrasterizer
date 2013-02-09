@@ -1,0 +1,50 @@
+Story: Farsighted Presenter rasterizes his slides
+
+As a Farsighted Presenter
+I want to rasterize my slides
+So that they do not shift when presenting
+
+Scenario 1: The presentation file exists
+Given the presentation file "Presentation.pptx" exists
+When the Farsighted Presenter chooses the "Rasterize" command from the context menu
+Then the program should rasterize the slides
+ And the program should save rasterized slides into the "Presentation - rasterized.pps" slide show
+
+Scenario 2: Wrong file name
+Given the presentation file "Presentation.pptx" does not exist
+When the Farsighted Presenter invokes the "ppt_rasterize Presentation.pptx" command
+Then the program should say that it can't find the file
+
+Scenario 3: No file name
+When the Farsighted Presenter invokes the "ppt_rasterize" command without arguments
+Then the program should explain how to use it
+
+--------------------------------------------------------------------------------
+
+Story: Fanciful Presenter rasterizes his slides with transition effects
+
+As a Fanciful Presenter
+I want to keep transitions effects between slides
+So that everyone sees my effects
+
+Scenario: The presentation file exists
+Given the presentation file "Presentation.pptx" exists
+When the Fanciful Presenter chooses the "Rasterize" command from the context menu
+Then the program should rasterize the slides
+ And the program should keep the slide transition effects
+ And the program should save rasterized slides with transition effects into the "Presentation - rasterized.pps" slide show
+
+--------------------------------------------------------------------------------
+
+Story: Cautious Presenter rasterizes his presentation into PDF
+
+As a Cautious Presenter
+I want my presentation to be converted to PDF
+So that I can present it even if PowerPoint is not installed
+
+Scenario: Scenario: The presentation file exists
+Given the presentation file "Presentation.pptx" exists
+ And the PDF feature is available in PowerPoint
+When the Cautious Presenter chooses the "Rasterize" command from the context menu
+Then the program should rasterize the slides
+ And the program should save rasterized slides into the "Presentation - rasterized.pdf" file

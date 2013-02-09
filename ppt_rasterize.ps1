@@ -1,17 +1,3 @@
-<#
-As a farsighted presenter
-I want to rasterize my slides
-So that they do not shift when presenting.
-
-As a fanciful presenter
-I want to keep transitions effects between slides
-So that everyone sees my effects.
-
-As a cautious presenter
-I want my presentation to be converted to PDF
-So that I can present it even if PowerPoint is not installed.
-#>
-
 param(
     [string] $pfilename
 )
@@ -36,14 +22,12 @@ $path = Split-Path $pfilename
 $filename = Split-Path $pfilename -Leaf
 $name = $filename.substring(0, $filename.lastindexOf("."))
 $slidesPath = "$path\PhotoAlbumSlides"
-$slideShowFileName = "$path\$name.pps"
-$pdfFileName = "$path\$name.pdf"
-$imagePdfFileName = "$path\$name.img.pdf"
+$slideShowFileName = "$path\$name - rasterized.pps"
+$rasterizedPdfFileName = "$path\$name - rasterized.pdf"
 
 $transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime', 
     'AdvanceTime', 'Duration', 'EntryEffect', 'Hidden', 'Speed')
 
-#$slide_size = None
 $application = New-Object -ComObject "PowerPoint.Application"
 try {
     $presentation = $application.Presentations.Open($pfilename)
@@ -94,7 +78,7 @@ try {
         # save as PPS
         $photoAlbum.SaveAs($slideShowFileName, $ppSaveAsShow, 0)
         # save as PDF
-        $photoAlbum.SaveAs($imagePdfFileName, $ppSaveAsPDF, 0)
+        $photoAlbum.SaveAs($rasterizedPdfFileName, $ppSaveAsPDF, 0)
         $photoAlbum.Close()
     }
     finally {
