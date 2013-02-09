@@ -1,17 +1,3 @@
-'''
-As a farsighted presenter
-I want to rasterize my slides
-So that they do not shift when presenting.
-
-As a fanciful presenter
-I want to keep transitions effects between slides
-So that everyone sees my effects.
-
-As a cautious presenter
-I want my presentation to be converted to PDF
-So that I can present it even without PowerPoint.
-'''
-
 import os
 import os.path
 import sys
