@@ -11,20 +11,24 @@ if not exist !powershell! (
     goto :eof
 )
 
-set "install_dir=%USERPROFILE%\.ppt_rasterize"
+set "install_dir=%USERPROFILE%\.ppt_rasterize\"
 if not exist !install_dir! (
     mkdir !install_dir!
 )
 set "master_url=https://raw.github.com/utapyngo/ppt_rasterize/master"
 
-for %%f in (ppt_rasterize.ps1 unreg.ps1 uninstall.cmd install.cmd) do (
-    if exist "%~dp0\%%f" (
-        copy "%~dp0\%%f" "!install_dir!"
-    ) else (
-        echo File "%%f" not found. Trying to download it from "!master_url!/%%f"
-        powershell -command "(New-Object Net.WebClient).DownloadFile(\"!master_url!/%%f\", \"!install_dir!\%%f\")"
-        if errorlevel 1 (
-            echo Unable to download.
+:: only copy if we are not already copied
+if /I "%~dp0" NEQ "!install_dir!" (
+    for %%f in (ppt_rasterize.ps1 unreg.ps1 uninstall.cmd install.cmd) do (
+        if exist "%~dp0\%%f" (
+            echo Copying %%f
+            copy "%~dp0\%%f" "!install_dir!"
+        ) else (
+            echo File "%%f" not found. Trying to download it from "!master_url!/%%f"
+            powershell -command "(New-Object Net.WebClient).DownloadFile(\"!master_url!/%%f\", \"!install_dir!%%f\")"
+            if errorlevel 1 (
+                echo Unable to download.
+            )
         )
     )
 )
