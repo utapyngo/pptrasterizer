@@ -1,3 +1,5 @@
+setup_ppt_rasterize.cmd
+
 *.py[co]
 
 # Packages

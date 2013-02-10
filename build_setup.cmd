@@ -1,0 +1,22 @@
+@echo off
+set "outfile=setup_ppt_rasterize.cmd"
+set "files=register.cmd ppt_rasterize.ps1 ppt_rasterize.cmd uninstall.cmd unreg.ps1"
+
+echo @echo off>%outfile%
+echo.>>%outfile%
+echo set "files=%files%">>%outfile%
+echo.>>%outfile%
+type install.cmd>>%outfile%
+
+echo ::begin filelist>>%outfile%
+for %%f in (%files%) do (
+    echo %%f>>%outfile%
+)
+echo ::end filelist>>%outfile%
+
+for %%f in (%files%) do (
+    echo.>>%outfile%
+    echo ::begin %%f>>%outfile%
+    type %%f>>%outfile%
+    echo ::end %%f>>%outfile%
+)

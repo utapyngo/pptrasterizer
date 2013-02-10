@@ -5,9 +5,13 @@ setlocal enabledelayedexpansion
 powershell -executionpolicy bypass -file %~dp0unreg.ps1
 
 :: remove the files
-for %%f in (ppt_rasterize.ps1 unreg.ps1 install.cmd stories.txt README.md ppt_rasterize.py) do (
-    if exist "%~dp0\%%f" (
-        rm "%~dp0\%%f"
+for /f %%f in (files.txt) do (
+    :: skip this file
+    if %%f neq %~nx0 (
+        if exist "%~dp0\%%f" (
+            echo Removing %%f
+            rm "%~dp0\%%f"
+        )
     )
 )
 

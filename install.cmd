@@ -1,39 +1,46 @@
-@echo off
-:: copy the distribution files to %USERPROFILE%\.ppt_rasterize
-:: register the "Rasterize" shell command for PowerPoint presentations and slide shows
-
-setlocal enabledelayedexpansion
+setlocal DisableDelayedExpansion
 for /f %%p in ('where powershell') do set "powershell=%%p"
 
-if not exist !powershell! (
+if not exist %powershell% (
     echo Windows Powershell not found
     echo Please install Windows Powershell first.
     goto :eof
 )
 
 set "install_dir=%USERPROFILE%\.ppt_rasterize\"
-if not exist !install_dir! (
-    mkdir !install_dir!
+if not exist %install_dir% (
+    mkdir %install_dir%
 )
-set "master_url=https://raw.github.com/utapyngo/ppt_rasterize/master"
 
 :: only copy if we are not already copied
-if /I "%~dp0" NEQ "!install_dir!" (
-    for %%f in (ppt_rasterize.ps1 unreg.ps1 uninstall.cmd install.cmd) do (
+for %%A in ("%~dp0") do for %%B in ("%install_dir%") do if %%~fA NEQ %%~fB (
+    for %%f in (%files%) do (
         if exist "%~dp0\%%f" (
             echo Copying %%f
-            copy "%~dp0\%%f" "!install_dir!"
+            copy "%~dp0\%%f" "%install_dir%"
         ) else (
-            echo File "%%f" not found. Trying to download it from "!master_url!/%%f"
-            powershell -command "(New-Object Net.WebClient).DownloadFile(\"!master_url!/%%f\", \"!install_dir!%%f\")"
-            if errorlevel 1 (
-                echo Unable to download.
-            )
+            call :get %%f > "%install_dir%\%%f"
         )
+        echo %%f>>%install_dir%files.txt
     )
+    echo files.txt>>%install_dir%files.txt
 )
 
-for %%v in (Show.8 SlideShow.8 Show.12 SlideShow.12 ShowMacroEnabled.12 SlideShowMacroEnabled.12) do (
-    echo Installing for PowerPoint.%%v
-    reg add HKCU\Software\Classes\PowerPoint.%%v\shell\Rasterize\command /f /ve /d "\"!powershell!\" -executionpolicy bypass -file \"!install_dir!\ppt_rasterize.ps1\" \"^%%1\""
+:: register shell command
+call "%install_dir%register.cmd"
+exit /b
+
+:get
+set "skip="
+for /f "delims=:" %%N in ('findstr /x /n "::begin.%~1" "%~f0"') do if not defined skip set skip=%%N
+set "end="
+for /f "delims=:" %%N in ('findstr /x /n "::end.%~1" "%~f0"') do if %%N gtr %skip% if not defined end set end=%%N
+for /f "skip=%skip% tokens=*" %%A in ('findstr /n "^" "%~f0"') do (
+  for /f "delims=:" %%N in ("%%A") do if %%N geq %end% exit /b
+  set "line=%%A"
+  setlocal EnableDelayedExpansion
+  echo(!line:*:=!
+  endlocal
 )
+exit /b
+
