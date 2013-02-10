@@ -12,15 +12,10 @@ if not exist %install_dir% (
     mkdir %install_dir%
 )
 
-:: only copy if we are not already copied
+:: only extract if we are not already there
 for %%A in ("%~dp0") do for %%B in ("%install_dir%") do if %%~fA NEQ %%~fB (
     for %%f in (%files%) do (
-        if exist "%~dp0\%%f" (
-            echo Copying %%f
-            copy "%~dp0\%%f" "%install_dir%"
-        ) else (
-            call :get %%f > "%install_dir%\%%f"
-        )
+        call :get %%f > "%install_dir%\%%f"
         echo %%f>>%install_dir%files.txt
     )
     echo files.txt>>%install_dir%files.txt
@@ -36,11 +31,10 @@ for /f "delims=:" %%N in ('findstr /x /n "::begin.%~1" "%~f0"') do if not define
 set "end="
 for /f "delims=:" %%N in ('findstr /x /n "::end.%~1" "%~f0"') do if %%N gtr %skip% if not defined end set end=%%N
 for /f "skip=%skip% tokens=*" %%A in ('findstr /n "^" "%~f0"') do (
-  for /f "delims=:" %%N in ("%%A") do if %%N geq %end% exit /b
-  set "line=%%A"
-  setlocal EnableDelayedExpansion
-  echo(!line:*:=!
-  endlocal
+    for /f "delims=:" %%N in ("%%A") do if %%N geq %end% exit /b
+    set "line=%%A"
+    setlocal EnableDelayedExpansion
+    echo(!line:*:=!
+    endlocal
 )
 exit /b
-
