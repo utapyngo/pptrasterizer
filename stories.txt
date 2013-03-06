@@ -21,18 +21,51 @@ Then the program should explain how to use it
 
 --------------------------------------------------------------------------------
 
+Story: Fanciful Presenter rasterizes his slides with notes
+
+As a Fanciful Presenter
+I want to keep my slides notes
+So that I can look at them when presenting
+
+Scenario: The presentation file with some notes exists
+Given the presentation file "Presentation.pptx" exists
+  And the presentation file contains some notes
+When the Fanciful Presenter chooses the "Rasterize" command from the context menu
+Then the program should rasterize the slides
+ And the program should copy notes from original slides to the rasterized slide-show
+ And the program should save rasterized slides with notes into the "Presentation - rasterized.pps" slide show
+
+--------------------------------------------------------------------------------
+
 Story: Fanciful Presenter rasterizes his slides with transition effects
 
 As a Fanciful Presenter
 I want to keep transitions effects between slides
 So that everyone sees my effects
 
-Scenario: The presentation file exists
+Scenario: The presentation file with transition effects exists
 Given the presentation file "Presentation.pptx" exists
+  And the presentation file contains some transition effects
 When the Fanciful Presenter chooses the "Rasterize" command from the context menu
 Then the program should rasterize the slides
  And the program should keep the slide transition effects
  And the program should save rasterized slides with transition effects into the "Presentation - rasterized.pps" slide show
+
+--------------------------------------------------------------------------------
+
+Story: Fanciful Presenter rasterizes his slides with media
+
+As a Fanciful Presenter
+I want to use audio/video on my rasterized slides
+So that everyone can better understand what I am talking about
+
+Scenario: The presentation file with some media exists
+Given the presentation file "Presentation.pptx" exists
+  And the presentation file contains some media
+When the Fanciful Presenter chooses the "Rasterize" command from the context menu
+Then the program should rasterize the slides
+ And the program should copy media from the original slides into the destination slide-show
+ And the program should save rasterized slides with media into the "Presentation - rasterized.pps" slide show
 
 --------------------------------------------------------------------------------
 
