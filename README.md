@@ -1,25 +1,68 @@
-Do you have a PowerPoint presentation and want to present it somewhere? So do I. But I am not sure if the computer I will present it on will have the same version of PowerPoint and all fonts required by my presentation. The solution is to rasterize my slides so they look same anywhere.
+Rasterization is a process of converting some vector data into images.
 
-This little tool does exactly this. Moreover, it preserves the transition effects between the slides. Just [download][installer] (only 7 kilobytes!) and run the installer. It does not require admin rights. It will add a popup menu command for PowerPoint files.
+Rasterization of a presentation means converting it into a slideshow consisting of images of original slides.
 
-# 1. [Download][installer] and run
 
-# 2. Locate the presentation in Explorer
+# Why should I rasterize my presentations?
+
+Because you want your presentation look the same everywhere.
+
+You just don't want the following to happen:
+
+* Something may shift on different version of PowerPoint.
+
+* Some fonts may be missing on other computers.
+
+After you have rastized your presentation, you don't have to worry about this. Since it's roughly a set of pictures, it does not require any fonts, and the text and pictures on slides can't shift. Yous slides will look the same everywhere.
+
+
+# What if...
+
+## ... my presentation has transistion effects between slides?
+
+They will be preserved. Don't worry.
+
+## ... my presentation contains notes?
+
+They will be preserved as well.
+
+## ... my slides contain media?
+
+All media is copied over slide images so you'll still be able to play audio/video while presenting your rasterized slides.
+
+## ... my slides contain animation?
+
+They will become static. Don't use animation if you want your slides to look the same everywhere.
+
+
+# How to use
+
+## 1. [Download][installer] and run the installer
+
+## 2. Locate the presentation in Windows Explorer
 
 <p align="center">
   <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/1.png" />
 </p>
 
-# 3. Right-click on it and select "Rasterize"
+## 3. Right-click on it and select "Rasterize"
 
 <p align="center">
   <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/2.png" />
 </p>
 
-# 4. You will get two rasterized files: PDF and PPS
+## 4. Check your rasterized presentation
+
+You will get two files:
+
+* PPS - PowerPoint slide-show with notes, media and transistion effects between slides preserved;
+* PDF - file for presenting on computers with no PowerPoint but with Acrobat Reader.
 
 <p align="center">
   <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/3.png" />
 </p>
+
+The files produced are not editable. They are to be shown. After changing the source presentation, you need to rasterize it again.
+
 
 [installer]: http://j.mp/ppt_rasterize

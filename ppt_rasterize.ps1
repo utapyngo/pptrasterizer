@@ -3,90 +3,86 @@ param(
 )
 
 if (-not $pfilename) {
-    echo "Usage: powershell -ExecutionPolicy Bypass ""$($script:MyInvocation.MyCommand.Path)"" ""Presentation.pptx"""
+    Write-Host "Usage: powershell -ExecutionPolicy Bypass ""$($script:MyInvocation.MyCommand.Path)"" ""Presentation.pptx"""
     return
 }
 
 if (-not (Test-Path $pfilename)) {
-    echo "File ""$pfilename"" not found"
+    Write-Host "File ""$pfilename"" not found"
     return
 }
 
 $ppSaveAsShow = 7
-$ppSaveAsPNG = 18
 $ppSaveAsPDF = 32
 $ppLayoutBlank = 12
-
-$pfilename = Resolve-Path $pfilename
-$path = Split-Path $pfilename
-$filename = Split-Path $pfilename -Leaf
-$name = $filename.substring(0, $filename.lastindexOf("."))
-$slidesPath = "$path\PhotoAlbumSlides"
-$slideShowFileName = "$path\$name - rasterized.pps"
-$rasterizedPdfFileName = "$path\$name - rasterized.pdf"
 
 $transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime', 
     'AdvanceTime', 'Duration', 'EntryEffect', 'Hidden', 'Speed')
 
-$application = New-Object -ComObject "PowerPoint.Application"
-try {
-    $presentation = $application.Presentations.Open($pfilename)
-    try {
-        # save slide size
-        $slide_size = $presentation.PageSetup.SlideSize
-        # save transitions
-        $transitions = @()
-        foreach ($slide in $presentation.Slides) {
-            echo "Checking slide $($slide.SlideIndex)"
-            $d = @{}
-            foreach ($member in $transitionMembers) {
-                if (Get-Member -InputObject $slide.SlideShowTransition -Name $member) {
-                    $d[$member] = Invoke-Expression ('$' + "slide.SlideShowTransition.$member")
-                }
-            }
-            $transitions += $d
+
+function Convert-Slide($original_slide, $slide, $slidesPath) {
+    # image
+    $slide_image_file_name = Join-Path $slidesPath "Slide$i.png"
+    $original_slide.export($slide_image_file_name, "PNG") | Out-Null
+    $slide.Shapes.AddPicture($slide_image_file_name, $false, $true, 0, 0) | Out-Null
+    # media
+    foreach ($shape in $original_slide.Shapes) {
+        if ($shape.MediaType) {
+            $shape.Copy() | Out-Null
+            $slide.Shapes.Paste() | Out-Null
         }
-        # save slide images
-        echo "Saving pictures"
-        $presentation.SaveAs($slidesPath, $ppSaveAsPNG, 0)
+    }
+    # notes
+    $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
+    $slide.NotesPage[0].Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null            
+    # transition
+    foreach ($memberName in $transitionMembers) {
+        if (Get-Member -InputObject $original_slide.SlideShowTransition -Name $memberName) {
+            $member = Invoke-Expression ('$' + "original_slide.SlideShowTransition.$memberName")
+            Invoke-Expression ('$' + "slide.SlideShowTransition.$memberName = " + $member)
+        }
+    }
+}
+
+function Convert-Presentation($pfilename) {
+    $pfilename = Resolve-Path $pfilename
+    $path = Split-Path $pfilename
+    $filename = Split-Path $pfilename -Leaf
+    $name = $filename.substring(0, $filename.lastindexOf("."))
+    $slidesPath = "$path\PhotoAlbumSlides"
+    $slideShowFileName = "$path\$name - rasterized.pps"
+    $rasterizedPdfFileName = "$path\$name - rasterized.pdf"
+    mkdir $slidesPath -ErrorAction SilentlyContinue | Out-Null
+    $application = New-Object -ComObject "PowerPoint.Application"
+    try {
+        $presentation = $application.Presentations.Open($pfilename)
+        try {
+            $photoAlbum = $application.Presentations.Add($true)
+            try {
+                $photoAlbum.PageSetup.SlideSize = $presentation.PageSetup.SlideSize
+                foreach ($original_slide in $presentation.Slides) {
+                    $i = $original_slide.SlideIndex
+                    Write-Host "Processing slide $i"
+                    $slide = $photoAlbum.Slides.Add($photoAlbum.Slides.Count + 1, $ppLayoutBlank)
+                    Convert-Slide $original_slide $slide $slidesPath
+                }
+                $photoAlbum.SaveAs($slideShowFileName, $ppSaveAsShow, 0) | Out-Null
+                $photoAlbum.SaveAs($rasterizedPdfFileName, $ppSaveAsPDF, 0) | Out-Null
+            }
+            finally {
+                $photoAlbum.Close() | Out-Null
+            }
+        }
+        finally {
+            $presentation.Close() | Out-Null
+            Remove-Item -Recurse $slidesPath -ErrorAction SilentlyContinue | Out-Null
+        }
     }
     finally {
-        $presentation.Close()
-    }
-    
-    # create photo album
-    try {
-        $photoAlbum = $application.Presentations.Add($true)
-        # restore slide size
-        if ($slide_size) {
-            $photoAlbum.PageSetup.SlideSize = $slide_size
+        if ($application.Presentations.Count -eq 0) {
+            $application.Quit()
         }
-        # restore slide images amd transitions
-        $slides = Get-ChildItem -Path $slidesPath -Filter *.png | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) }
-        $slides | ForEach-Object -Begin { $i = 0 } -Process {
-            $fn = $_
-            echo "Restoring $fn"
-            $slide = $photoAlbum.Slides.Add($photoAlbum.Slides.Count + 1, $ppLayoutBlank)
-            $dummy = $slide.Shapes.AddPicture((Join-Path $slidesPath $fn), $false, $true, 0, 0)
-            foreach ($member in $transitionMembers) {
-                if ($transitions[$i].contains($member)) {
-                    Invoke-Expression ('$' + "slide.SlideShowTransition.$member = " + $transitions[$i][$member])
-                }
-            }
-            $i++
-        }
-        # save as PPS
-        $photoAlbum.SaveAs($slideShowFileName, $ppSaveAsShow, 0)
-        # save as PDF
-        $photoAlbum.SaveAs($rasterizedPdfFileName, $ppSaveAsPDF, 0)
-        $photoAlbum.Close()
     }
-    finally {
-        # clean
-        Remove-Item -Recurse $slidesPath
-    }
-    
 }
-finally {
-    $application.Quit()
-}
+
+Convert-Presentation $pfilename
