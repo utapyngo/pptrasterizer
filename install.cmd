@@ -23,8 +23,17 @@ for %%A in ("%~dp0") do for %%B in ("%install_dir%") do if %%~fA NEQ %%~fB (
     echo files.txt>>%install_dir%files.txt
 )
 
+:: add uninstall information to Programs and Features
+set "uninstall_key=HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\ppt_rasterize"
+reg add %uninstall_key% /f /v DisplayName /d ppt_rasterize >nul
+reg add %uninstall_key% /f /v InstallLocation /d %install_dir% >nul
+reg add %uninstall_key% /f /t REG_DWORD /v NoModify /d 1 >nul
+reg add %uninstall_key% /f /t REG_DWORD /v NoRepair /d 1 >nul
+reg add %uninstall_key% /f /v UninstallString /d %install_dir%uninstall.cmd >nul
+
 :: register shell command
 call "%install_dir%register.cmd"
+
 exit /b
 
 :get
