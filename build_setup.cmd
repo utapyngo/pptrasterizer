@@ -1,6 +1,6 @@
 @echo off
 set "outfile=setup_ppt_rasterize.bat"
-set "files=register.cmd ppt_rasterize.ps1 ppt_rasterize.cmd uninstall.cmd unreg.ps1"
+set "files=register.cmd ppt_rasterize.ps1 ppt_rasterize.cmd uninstall.cmd unreg.ps1 update.cmd"
 
 echo @echo off>%outfile%
 echo.>>%outfile%
