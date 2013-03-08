@@ -42,13 +42,13 @@ They will become static. Don't use animation if you want your slides to look the
 ## 2. Locate the presentation in Windows Explorer
 
 <p align="center">
-  <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/1.png" />
+  <img src="http://utapyngo.github.com/pptrasterizer/images/1.png" />
 </p>
 
 ## 3. Right-click on it and select "Rasterize"
 
 <p align="center">
-  <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/2.png" />
+  <img src="http://utapyngo.github.com/pptrasterizer/images/2.png" />
 </p>
 
 ## 4. Check your rasterized presentation
@@ -59,10 +59,10 @@ You will get two files:
 * PDF - file for presenting on computers with no PowerPoint but with Acrobat Reader.
 
 <p align="center">
-  <img src="https://dl.dropbox.com/u/62722148/img/ppt_rasterize/3.png" />
+  <img src="http://utapyngo.github.com/pptrasterizer/images/1.png" />
 </p>
 
 The files produced are not editable. They are to be shown. After changing the source presentation, you need to rasterize it again.
 
 
-[installer]: http://j.mp/ppt_rasterize
+[installer]: http://j.mp/pptrasterizer

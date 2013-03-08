@@ -1,14 +1,16 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal EnableDelayedExpansion
 
-echo The ppt_rasterize program is about to be removed from your computer.
+call %~dp0vars.cmd
+
+echo %product_name% is about to be removed from your computer.
 pause
 
 :: unregister the "Rasterize" command
 powershell -executionpolicy bypass -file %~dp0unreg.ps1
 
 :: remove from Programs and Features
-reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\ppt_rasterize /f >nul
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\%short_name%" /f >nul
 
 :: remove the files
 for /f %%f in (files.txt) do (

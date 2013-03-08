@@ -1,4 +1,8 @@
 setlocal DisableDelayedExpansion
+
+echo This will install %product_name% to you computer.
+pause
+
 for /f %%p in ('where powershell') do set "powershell=%%p"
 
 if not exist %powershell% (
@@ -8,7 +12,7 @@ if not exist %powershell% (
     goto :eof
 )
 
-set "install_dir=%USERPROFILE%\.ppt_rasterize\"
+set "install_dir=%USERPROFILE%\.%short_name%\"
 if not exist %install_dir% (
     mkdir %install_dir%
 )
@@ -24,8 +28,8 @@ for %%A in ("%~dp0") do for %%B in ("%install_dir%") do if %%~fA NEQ %%~fB (
 )
 
 :: add uninstall information to Programs and Features
-set "uninstall_key=HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\ppt_rasterize"
-reg add %uninstall_key% /f /v DisplayName /d ppt_rasterize >nul
+set "uninstall_key=HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\%short_name%"
+reg add %uninstall_key% /f /v DisplayName /d "%product_name%" >nul
 reg add %uninstall_key% /f /v InstallLocation /d %install_dir% >nul
 reg add %uninstall_key% /f /t REG_DWORD /v NoModify /d 1 >nul
 reg add %uninstall_key% /f /t REG_DWORD /v NoRepair /d 1 >nul

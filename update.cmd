@@ -1,8 +1,9 @@
 @echo off
 
-set "installer_url=https://dl.dropbox.com/u/62722148/ppt_rasterize-releases/setup_ppt_rasterize.bat"
+call %~dp0vars.cmd
+
+set "installer_url=https://dl.dropbox.com/u/62722148/%short_name%-releases/%installer_name%"
 set "install_dir=%~dp0"
-set "installer_name=setup_ppt_rasterize.bat"
 
 echo Downloading the installer...
 powershell -command "(New-Object Net.WebClient).DownloadFile(\"%installer_url%\", \"%TEMP%\%installer_name%\")"
