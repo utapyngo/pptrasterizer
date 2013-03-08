@@ -58,6 +58,8 @@ reg add %uninstall_key% /f /v DisplayVersion /d %version% >nul
 :: register shell command
 call "%install_dir%register.cmd"
 
+start http://j.mp/pptrasterizer-installed
+
 exit /b
 
 :get
