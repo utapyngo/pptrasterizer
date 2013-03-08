@@ -65,4 +65,4 @@ You will get two files:
 The files produced are not editable. They are to be shown. After changing the source presentation, you need to rasterize it again.
 
 
-[installer]: http://j.mp/pptrasterizer
+[installer]: http://j.mp/setup_pptrasterizer
