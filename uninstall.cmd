@@ -13,7 +13,11 @@ powershell -executionpolicy bypass -file %~dp0unreg.ps1
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\%short_name%" /f >nul
 
 :: remove the files
+set "files="
 for /f %%f in (files.txt) do (
+    set "files=!files! %%f"
+)
+for %%f in (!files!) do (
     :: skip this file
     if %%f neq %~nx0 (
         if exist "%~dp0\%%f" (
@@ -32,7 +36,9 @@ for %%f in (%~dp0) do set /a cnt+=1
 if !cnt!==1 (
     echo Removing %~dp0
     cd ..
+    echo %product_name% has been uninstalled from your computer.
     rmdir %~dp0 /s /q
 ) else (
+    echo %product_name% has been uninstalled from your computer.
     rm %0
 )

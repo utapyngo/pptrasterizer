@@ -1,4 +1,5 @@
-setup_ppt_rasterize.bat
+setup_pptrasterizer.bat
+version.txt
 
 *.py[co]
 

@@ -1,6 +1,6 @@
 setlocal DisableDelayedExpansion
 
-echo This will install %product_name% to you computer.
+echo This will install %product_name% version %version% to you computer.
 pause
 
 for /f %%p in ('where powershell') do set "powershell=%%p"
@@ -13,8 +13,28 @@ if not exist %powershell% (
 )
 
 set "install_dir=%USERPROFILE%\.%short_name%\"
-if not exist %install_dir% (
-    mkdir %install_dir%
+
+if exist "%install_dir%version.txt" (
+    :: already installed
+    set /p current_version=<"%install_dir%version.txt"
+    setlocal EnableDelayedExpansion
+    echo Your version: !current_version!
+    echo Latest version: %version%
+    if [!current_version!] GEQ [%version%] (
+        echo You are already using the latest version of %product_name%.
+        echo Press any key to exit the installer . . .
+        pause>nul
+        goto :eof
+    ) else (
+        echo Uninstalling previous version...
+        call %install_dir%uninstall.cmd
+        pause
+    )
+    endlocal
+)
+
+if not exist "%install_dir%" (
+    mkdir "%install_dir%"
 )
 
 :: only extract if we are not already there
@@ -34,7 +54,7 @@ reg add %uninstall_key% /f /v InstallLocation /d %install_dir% >nul
 reg add %uninstall_key% /f /t REG_DWORD /v NoModify /d 1 >nul
 reg add %uninstall_key% /f /t REG_DWORD /v NoRepair /d 1 >nul
 reg add %uninstall_key% /f /v UninstallString /d %install_dir%uninstall.cmd >nul
-
+reg add %uninstall_key% /f /v DisplayVersion /d %version% >nul
 :: register shell command
 call "%install_dir%register.cmd"
 
