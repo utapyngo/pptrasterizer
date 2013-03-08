@@ -20,14 +20,14 @@ if exist "%install_dir%version.txt" (
     setlocal EnableDelayedExpansion
     echo Your version: !current_version!
     echo Latest version: %version%
-    if [!current_version!] GEQ [%version%] (
+    if !current_version! GEQ %version% (
         echo You are already using the latest version of %product_name%.
         echo Press any key to exit the installer . . .
         pause>nul
         goto :eof
     ) else (
         echo Uninstalling previous version...
-        call %install_dir%uninstall.cmd
+        call %install_dir%uninstall.cmd 2>nul
         pause
     )
     endlocal
