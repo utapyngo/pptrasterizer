@@ -39,9 +39,11 @@ if not exist "%install_dir%" (
 
 :: only extract if we are not already there
 for %%A in ("%~dp0") do for %%B in ("%install_dir%") do if %%~fA NEQ %%~fB (
+    echo Copying files...
     type nul >%install_dir%files.txt
     for %%f in (%files%) do (
         call :get %%f > "%install_dir%\%%f"
+        echo   %%f
         echo %%f>>%install_dir%files.txt
     )
     echo files.txt>>%install_dir%files.txt
