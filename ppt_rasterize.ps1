@@ -24,7 +24,7 @@ function Convert-Slide($original_slide, $slide, $slidesPath) {
     # image
     $slide_image_file_name = Join-Path $slidesPath "Slide$i.png"
     $original_slide.export($slide_image_file_name, "PNG") | Out-Null
-    $slide.Shapes.AddPicture($slide_image_file_name, $false, $true, 0, 0) | Out-Null
+    $slide.Shapes.AddPicture($slide_image_file_name, $false, $true, 0, 0, $slide.Parent.PageSetup.SlideHeight, $slide.Parent.PageSetup.SlideWidth) | Out-Null
     # media
     foreach ($shape in $original_slide.Shapes) {
         if ($shape.MediaType) {
@@ -33,12 +33,8 @@ function Convert-Slide($original_slide, $slide, $slidesPath) {
         }
     }
     # notes
-    try {
-        $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
-        $slide.NotesPage[0].Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null            
-    } catch {
-        # sometimes it does not work for some reason
-    }
+    $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
+    $slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null
     # transition
     foreach ($memberName in $transitionMembers) {
         if (Get-Member -InputObject $original_slide.SlideShowTransition -Name $memberName) {
