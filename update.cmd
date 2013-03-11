@@ -9,7 +9,8 @@ echo Downloading the installer...
 powershell -command "(New-Object Net.WebClient).DownloadFile(\"%installer_url%\", \"%TEMP%\%installer_name%\")"
 
 if errorlevel 1 (
-    echo Unable to download the installer.
+    echo Unable to download the installer. Check your Internet connection and firewall rules.
+    pause
     goto :eof
 )
 
