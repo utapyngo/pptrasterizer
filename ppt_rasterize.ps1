@@ -15,10 +15,21 @@ if (-not (Test-Path $pfilename)) {
 $ppSaveAsShow = 7
 $ppSaveAsPDF = 32
 $ppLayoutBlank = 12
+$msoPlaceholder = 14
+$ppPlaceholderBody = 2
+
 
 $transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime', 
     'AdvanceTime', 'Duration', 'EntryEffect', 'Hidden', 'Speed')
 
+
+function Find-Notes($slide) {
+    foreach ($shape in $slide.NotesPage.Shapes) {
+        if (($shape.Type -eq $msoPlaceholder) -and ($shape.PlaceholderFormat.Type -eq $ppPlaceholderBody)) {
+            return $shape
+        }
+    }
+}
 
 function Convert-Slide($original_slide, $slide, $slidesPath) {
     # image
@@ -37,8 +48,11 @@ function Convert-Slide($original_slide, $slide, $slidesPath) {
         }
     }
     # notes
-    $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
-    $slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null
+    $original_notes = Find-Notes $original_slide
+    $original_notes.TextFrame.TextRange.Copy() | Out-Null
+    $notes = Find-Notes $slide
+    $notes.TextFrame.TextRange.Paste() | Out-Null
+
     # transition
     foreach ($memberName in $transitionMembers) {
         if (Get-Member -InputObject $original_slide.SlideShowTransition -Name $memberName) {
