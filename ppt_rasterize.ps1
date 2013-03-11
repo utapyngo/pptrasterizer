@@ -22,9 +22,13 @@ $transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime',
 
 function Convert-Slide($original_slide, $slide, $slidesPath) {
     # image
+    $width = $slide.Parent.PageSetup.SlideWidth
+    $height = $slide.Parent.PageSetup.SlideHeight
     $slide_image_file_name = Join-Path $slidesPath "Slide$i.png"
-    $original_slide.export($slide_image_file_name, "PNG") | Out-Null
-    $slide.Shapes.AddPicture($slide_image_file_name, $false, $true, 0, 0, $slide.Parent.PageSetup.SlideWidth, $slide.Parent.PageSetup.SlideHeight) | Out-Null
+    $original_slide.export($slide_image_file_name, "PNG",
+        $width * 2, $height * 2) | Out-Null
+    $slide.Shapes.AddPicture($slide_image_file_name, $false, $true, 0, 0,
+        $width, $height) | Out-Null
     # media
     foreach ($shape in $original_slide.Shapes) {
         if ($shape.MediaType) {
