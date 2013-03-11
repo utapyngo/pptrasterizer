@@ -33,8 +33,12 @@ function Convert-Slide($original_slide, $slide, $slidesPath) {
         }
     }
     # notes
-    $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
-    $slide.NotesPage[0].Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null            
+    try {
+        $original_slide.NotesPage.Shapes.Item(2).TextFrame.TextRange.Copy() | Out-Null
+        $slide.NotesPage[0].Shapes.Item(2).TextFrame.TextRange.Paste() | Out-Null            
+    } catch {
+        # sometimes it does not work for some reason
+    }
     # transition
     foreach ($memberName in $transitionMembers) {
         if (Get-Member -InputObject $original_slide.SlideShowTransition -Name $memberName) {
