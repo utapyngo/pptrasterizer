@@ -5,7 +5,7 @@ set "files=vars.cmd register.cmd ppt_rasterize.ps1 ppt_rasterize.cmd uninstall.c
 set "product_name=PowerPoint Presentation Rasterizer"
 set "short_name=pptrasterizer"
 set "installer_name=setup_%short_name%.bat"
-set "version=33"
+set "version=34"
 
 setlocal DisableDelayedExpansion
 
@@ -23,23 +23,10 @@ if not exist %powershell% (
 
 set "install_dir=%USERPROFILE%\.%short_name%\"
 
-if exist "%install_dir%version.txt" (
-    :: already installed
-    set /p current_version=<"%install_dir%version.txt"
-    setlocal EnableDelayedExpansion
-    echo Your version: !current_version!
-    echo Latest version: %version%
-    if !current_version! GEQ %version% (
-        echo You are already using the latest version of %product_name%.
-        echo Press any key to exit the installer . . .
-        pause>nul
-        goto :eof
-    ) else (
-        echo Uninstalling previous version...
-        call %install_dir%uninstall.cmd 2>nul
-        pause
-    )
-    endlocal
+if exist "%install_dir%uninstall.cmd" (
+    echo Uninstalling previous version...
+    call %install_dir%uninstall.cmd 2>nul
+    pause
 )
 
 if not exist "%install_dir%" (
@@ -327,8 +314,25 @@ if ($nothing) {
 
 call %~dp0vars.cmd
 
-set "installer_url=https://dl.dropbox.com/u/62722148/%short_name%-releases/%installer_name%"
+set "version_url=http://utapyngo.github.com/pptrasterizer/version.txt"
+set "installer_url=http://utapyngo.github.com/pptrasterizer/%installer_name%"
 set "install_dir=%~dp0"
+
+echo Checking for the latest version online...
+powershell -command "(New-Object Net.WebClient).DownloadFile(\"%version_url%\", \"%TEMP%\%short_name%_latest_version.txt\")"
+if errorlevel 1 (
+    echo Unable to check version online. Check your Internet connection and firewall rules.
+    pause
+    goto :eof
+)
+set /p latest_version=<"%TEMP%\%short_name%_latest_version.txt"
+set /p current_version=<"%install_dir%version.txt"
+if %current_version% GEQ %latest_version% (
+    echo You are already using the latest version of %product_name%.
+    echo Press any key to exit . . .
+    pause>nul
+    goto :eof
+)
 
 echo Downloading the installer...
 powershell -command "(New-Object Net.WebClient).DownloadFile(\"%installer_url%\", \"%TEMP%\%installer_name%\")"
@@ -346,6 +350,6 @@ del %TEMP%\%installer_name%
 ::end update.cmd
 
 ::begin version.txt
-33
+34
 
 ::end version.txt
