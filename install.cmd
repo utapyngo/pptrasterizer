@@ -14,23 +14,10 @@ if not exist %powershell% (
 
 set "install_dir=%USERPROFILE%\.%short_name%\"
 
-if exist "%install_dir%version.txt" (
-    :: already installed
-    set /p current_version=<"%install_dir%version.txt"
-    setlocal EnableDelayedExpansion
-    echo Your version: !current_version!
-    echo Latest version: %version%
-    if !current_version! GEQ %version% (
-        echo You are already using the latest version of %product_name%.
-        echo Press any key to exit the installer . . .
-        pause>nul
-        goto :eof
-    ) else (
-        echo Uninstalling previous version...
-        call %install_dir%uninstall.cmd 2>nul
-        pause
-    )
-    endlocal
+if exist "%install_dir%uninstall.cmd" (
+    echo Uninstalling previous version...
+    call %install_dir%uninstall.cmd 2>nul
+    pause
 )
 
 if not exist "%install_dir%" (
