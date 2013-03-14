@@ -8,3 +8,8 @@
   color: rgba(255,255,255,0.5);
   transition: all 0.2s ease-in-out 0s;
 }
+
+.addthis_toolbox {
+    width: 250px;
+    margin: 0 auto;
+}
