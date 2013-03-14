@@ -4,7 +4,6 @@ call %~dp0vars.cmd
 
 set "version_url=http://utapyngo.github.com/pptrasterizer/version.txt"
 set "installer_url=http://utapyngo.github.com/pptrasterizer/%installer_name%"
-set "install_dir=%~dp0"
 
 echo Checking for the latest version online...
 powershell -command "(New-Object Net.WebClient).DownloadFile(\"%version_url%\", \"%TEMP%\%short_name%_latest_version.txt\")"
@@ -14,8 +13,9 @@ if errorlevel 1 (
     goto :eof
 )
 set /p latest_version=<"%TEMP%\%short_name%_latest_version.txt"
-set /p current_version=<"%install_dir%version.txt"
-if %current_version% GEQ %latest_version% (
+del "%TEMP%\%short_name%_latest_version.txt"
+
+if %version% GEQ %latest_version% (
     echo You are already using the latest version of %product_name%.
     echo Press any key to exit . . .
     pause>nul

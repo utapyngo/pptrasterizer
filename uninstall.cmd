@@ -3,7 +3,7 @@ setlocal EnableDelayedExpansion
 
 call %~dp0vars.cmd
 
-echo %product_name% is about to be removed from your computer.
+echo %product_name% version %version% is about to be removed from your computer.
 pause
 
 :: unregister the "Rasterize" command
@@ -33,12 +33,12 @@ for %%f in (%~dp0) do set /a cnt+=1
 
 :: remove the directory if it is empty
 :: remove uninstall.cmd otherwise
-if !cnt!==1 (
+if !cnt! EQU 1 (
     echo Removing %~dp0
     cd ..
-    echo %product_name% has been uninstalled from your computer.
+    echo %product_name% version %version% has been uninstalled from your computer.
     rmdir %~dp0 /s /q
 ) else (
-    echo %product_name% has been uninstalled from your computer.
+    echo %product_name% version %version% has been uninstalled from your computer.
     del %0
 )
