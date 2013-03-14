@@ -5,7 +5,9 @@ set "files=vars.cmd register.cmd ppt_rasterize.ps1 ppt_rasterize.cmd uninstall.c
 set "product_name=PowerPoint Presentation Rasterizer"
 set "short_name=pptrasterizer"
 set "installer_name=setup_%short_name%.bat"
-set "version=34"
+set "install_dir=%~dp0"
+set /p version=<"%install_dir%version.txt"
+set "version=35"
 
 setlocal DisableDelayedExpansion
 
@@ -81,6 +83,8 @@ exit /b
 set "product_name=PowerPoint Presentation Rasterizer"
 set "short_name=pptrasterizer"
 set "installer_name=setup_%short_name%.bat"
+set "install_dir=%~dp0"
+set /p version=<"%install_dir%version.txt"
 
 ::end vars.cmd
 
@@ -244,7 +248,7 @@ setlocal EnableDelayedExpansion
 
 call %~dp0vars.cmd
 
-echo %product_name% is about to be removed from your computer.
+echo %product_name% version %version% is about to be removed from your computer.
 pause
 
 :: unregister the "Rasterize" command
@@ -274,13 +278,13 @@ for %%f in (%~dp0) do set /a cnt+=1
 
 :: remove the directory if it is empty
 :: remove uninstall.cmd otherwise
-if !cnt!==1 (
+if !cnt! EQU 1 (
     echo Removing %~dp0
     cd ..
-    echo %product_name% has been uninstalled from your computer.
+    echo %product_name% version %version% has been uninstalled from your computer.
     rmdir %~dp0 /s /q
 ) else (
-    echo %product_name% has been uninstalled from your computer.
+    echo %product_name% version %version% has been uninstalled from your computer.
     del %0
 )
 
@@ -316,7 +320,6 @@ call %~dp0vars.cmd
 
 set "version_url=http://utapyngo.github.com/pptrasterizer/version.txt"
 set "installer_url=http://utapyngo.github.com/pptrasterizer/%installer_name%"
-set "install_dir=%~dp0"
 
 echo Checking for the latest version online...
 powershell -command "(New-Object Net.WebClient).DownloadFile(\"%version_url%\", \"%TEMP%\%short_name%_latest_version.txt\")"
@@ -326,8 +329,9 @@ if errorlevel 1 (
     goto :eof
 )
 set /p latest_version=<"%TEMP%\%short_name%_latest_version.txt"
-set /p current_version=<"%install_dir%version.txt"
-if %current_version% GEQ %latest_version% (
+del "%TEMP%\%short_name%_latest_version.txt"
+
+if %version% GEQ %latest_version% (
     echo You are already using the latest version of %product_name%.
     echo Press any key to exit . . .
     pause>nul
@@ -350,6 +354,6 @@ del %TEMP%\%installer_name%
 ::end update.cmd
 
 ::begin version.txt
-34
+35
 
 ::end version.txt
