@@ -1,5 +1,6 @@
 param(
-    [string] $pfilename
+    [string] $pfilename,
+    [string] $slideShowFileName
 )
 
 if (-not $pfilename) {
@@ -19,8 +20,7 @@ $msoPlaceholder = 14
 $ppPlaceholderBody = 2
 
 
-$transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime', 
-    'AdvanceTime', 'Duration', 'EntryEffect', 'Hidden', 'Speed')
+$transitionMembers = ('AdvanceOnClick', 'AdvanceOnTime', 'AdvanceTime', 'Duration', 'EntryEffect', 'Hidden', 'Speed')
 
 
 function Find-Notes($slide) {
@@ -57,22 +57,33 @@ function Convert-Slide($original_slide, $slide, $slidesPath) {
     foreach ($memberName in $transitionMembers) {
         if (Get-Member -InputObject $original_slide.SlideShowTransition -Name $memberName) {
             $member = Invoke-Expression ('$' + "original_slide.SlideShowTransition.$memberName")
-            Invoke-Expression ('$' + "slide.SlideShowTransition.$memberName = " + $member)
+            Invoke-Expression ('$' + "slide.SlideShowTransition.$memberName = ""$member""")
         }
     }
 }
 
-function Convert-Presentation($pfilename) {
+function Convert-Presentation($pfilename, $slideShowFileName) {
     $pfilename = Resolve-Path $pfilename
     $path = Split-Path $pfilename
     $filename = Split-Path $pfilename -Leaf
     $name = $filename.substring(0, $filename.lastindexOf("."))
-    $slidesPath = "$path\PhotoAlbumSlides"
-    $slideShowFileName = "$path\$name - rasterized.pps"
-    $rasterizedPdfFileName = "$path\$name - rasterized.pdf"
+    if (-not $slideShowFileName) {
+        $slideShowFileName = "$path\$name - rasterized.pps"
+        $rasterizedPdfFileName = "$path\$name - rasterized.pdf"
+    }
+    if (($env:temp) -and (Test-Path $env:temp)) {
+        $slidesPath = "$env:temp\PhotoAlbumSlides"
+    } else {
+        $slidesPath = "$path\PhotoAlbumSlides"
+    }
+    if (Test-Path $slidesPath) {
+        Write-Host "Cleaning $slidesPath"
+        Remove-Item -Recurse $slidesPath -ErrorAction SilentlyContinue | Out-Null
+    }    
     mkdir $slidesPath -ErrorAction SilentlyContinue | Out-Null
     $application = New-Object -ComObject "PowerPoint.Application"
     try {
+        Write-Host "Loading $pfilename"
         $presentation = $application.Presentations.Open($pfilename)
         try {
             $photoAlbum = $application.Presentations.Add($true)
@@ -84,8 +95,12 @@ function Convert-Presentation($pfilename) {
                     $slide = $photoAlbum.Slides.Add($photoAlbum.Slides.Count + 1, $ppLayoutBlank)
                     Convert-Slide $original_slide $slide $slidesPath
                 }
+                Write-Host "Saving $slideShowFileName"
                 $photoAlbum.SaveAs($slideShowFileName, $ppSaveAsShow, 0) | Out-Null
-                $photoAlbum.SaveAs($rasterizedPdfFileName, $ppSaveAsPDF, 0) | Out-Null
+                if ($rasterizedPdfFileName) {
+                    Write-Host "Saving $rasterizedPdfFileName"
+                    $photoAlbum.SaveAs($rasterizedPdfFileName, $ppSaveAsPDF, 0) | Out-Null
+                }
             }
             finally {
                 $photoAlbum.Close() | Out-Null
@@ -103,4 +118,11 @@ function Convert-Presentation($pfilename) {
     }
 }
 
-Convert-Presentation $pfilename
+try {
+    Convert-Presentation $pfilename $slideShowFileName
+} catch {
+    Write-Host $_.Exception.ToString()
+    Write-Host "An error occurred. Please report this bug at"
+    Write-Host "http://github.com/utapyngo/pptrasterizer/issues"
+    cmd /c pause | Out-Null
+}

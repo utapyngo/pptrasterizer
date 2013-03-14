@@ -22,7 +22,7 @@ for %%f in (!files!) do (
     if %%f neq %~nx0 (
         if exist "%~dp0\%%f" (
             echo Removing %%f
-            rm "%~dp0\%%f"
+            del "%~dp0\%%f"
         )
     )
 )
@@ -40,5 +40,5 @@ if !cnt!==1 (
     rmdir %~dp0 /s /q
 ) else (
     echo %product_name% has been uninstalled from your computer.
-    rm %0
+    del %0
 )

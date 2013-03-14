@@ -16,4 +16,4 @@ if errorlevel 1 (
 
 call %TEMP%\%installer_name%
 
-rm %TEMP%\%installer_name%
+del %TEMP%\%installer_name%

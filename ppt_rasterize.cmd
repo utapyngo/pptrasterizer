@@ -4,4 +4,4 @@ if [%1]==[] (
     goto :eof
 )
 
-powershell -ExecutionPolicy Bypass "%~dp0ppt_rasterize.ps1" '%1'
+powershell -ExecutionPolicy Bypass "%~dp0ppt_rasterize.ps1" '%1' '%2'
