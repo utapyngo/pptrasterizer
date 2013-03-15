@@ -7,10 +7,11 @@ set "short_name=pptrasterizer"
 set "installer_name=setup_%short_name%.bat"
 set "install_dir=%~dp0"
 set /p version=<"%install_dir%version.txt"
-set "version=35"
+set "version=36"
 
 setlocal DisableDelayedExpansion
 
+title %product_name% Setup Program
 echo This will install %product_name% version %version% to you computer.
 pause
 
@@ -28,6 +29,8 @@ set "install_dir=%USERPROFILE%\.%short_name%\"
 if exist "%install_dir%uninstall.cmd" (
     echo Uninstalling previous version...
     call %install_dir%uninstall.cmd 2>nul
+    set "reinstall=1"
+    title %product_name% Setup Program
     pause
 )
 
@@ -59,7 +62,7 @@ reg add %uninstall_key% /f /v DisplayVersion /d %version% >nul
 call "%install_dir%register.cmd"
 
 :: thank for installing if only not updating
-if not defined "%installer_url%" (
+if not defined reinstall (
     start http://j.mp/pptrasterizer-installed
 )
 
@@ -221,6 +224,7 @@ function Convert-Presentation($pfilename, $slideShowFileName) {
 }
 
 try {
+    (Get-Host).UI.RawUI.WindowTitle = "PowerPoint Presentation Rasterizer"
     Convert-Presentation $pfilename $slideShowFileName
 } catch {
     Write-Host $_.Exception.ToString()
@@ -248,6 +252,7 @@ setlocal EnableDelayedExpansion
 
 call %~dp0vars.cmd
 
+title %product_name% Uninstaller
 echo %product_name% version %version% is about to be removed from your computer.
 pause
 
@@ -293,6 +298,7 @@ if !cnt! EQU 1 (
 ::begin unreg.ps1
 # Unregister the "Rasterize" command
 
+(Get-Host).UI.RawUI.WindowTitle = 'PowerPoint Presentation Rasterizer Uninstaller'
 $nothing = $true
 Set-Location HKCU:\Software\Classes
 'Show.8 SlideShow.8 Show.12 SlideShow.12 ShowMacroEnabled.12 SlideShowMacroEnabled.12'.Split() |% {
@@ -354,6 +360,6 @@ del %TEMP%\%installer_name%
 ::end update.cmd
 
 ::begin version.txt
-35
+36
 
 ::end version.txt
