@@ -9,7 +9,7 @@ set "install_dir=%~dp0"
 if exist "%install_dir%version.txt" (
     set /p version=<"%install_dir%version.txt"
 )
-set "version=37"
+set "version=38"
 
 setlocal DisableDelayedExpansion
 
@@ -19,7 +19,7 @@ pause
 
 for /f %%p in ('where powershell') do set "powershell=%%p"
 
-if not exist %powershell% (
+if not defined powershell (
     echo Windows Powershell not found
     echo Please install Windows Powershell first.
     pause
@@ -364,6 +364,6 @@ del %TEMP%\%installer_name%
 ::end update.cmd
 
 ::begin version.txt
-37
+38
 
 ::end version.txt
