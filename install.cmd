@@ -6,7 +6,7 @@ pause
 
 for /f %%p in ('where powershell') do set "powershell=%%p"
 
-if not exist %powershell% (
+if not defined powershell (
     echo Windows Powershell not found
     echo Please install Windows Powershell first.
     pause
