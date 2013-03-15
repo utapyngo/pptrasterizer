@@ -119,6 +119,7 @@ function Convert-Presentation($pfilename, $slideShowFileName) {
 }
 
 try {
+    (Get-Host).UI.RawUI.WindowTitle = "PowerPoint Presentation Rasterizer"
     Convert-Presentation $pfilename $slideShowFileName
 } catch {
     Write-Host $_.Exception.ToString()

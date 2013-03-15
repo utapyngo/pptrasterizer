@@ -3,6 +3,7 @@ setlocal EnableDelayedExpansion
 
 call %~dp0vars.cmd
 
+title %product_name% Uninstaller
 echo %product_name% version %version% is about to be removed from your computer.
 pause
 

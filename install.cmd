@@ -1,5 +1,6 @@
 setlocal DisableDelayedExpansion
 
+title %product_name% Setup Program
 echo This will install %product_name% version %version% to you computer.
 pause
 
@@ -17,6 +18,8 @@ set "install_dir=%USERPROFILE%\.%short_name%\"
 if exist "%install_dir%uninstall.cmd" (
     echo Uninstalling previous version...
     call %install_dir%uninstall.cmd 2>nul
+    set "reinstall=1"
+    title %product_name% Setup Program
     pause
 )
 
@@ -48,7 +51,7 @@ reg add %uninstall_key% /f /v DisplayVersion /d %version% >nul
 call "%install_dir%register.cmd"
 
 :: thank for installing if only not updating
-if not defined "%installer_url%" (
+if not defined reinstall (
     start http://j.mp/pptrasterizer-installed
 )
 

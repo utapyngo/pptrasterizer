@@ -1,5 +1,6 @@
 # Unregister the "Rasterize" command
 
+(Get-Host).UI.RawUI.WindowTitle = 'PowerPoint Presentation Rasterizer Uninstaller'
 $nothing = $true
 Set-Location HKCU:\Software\Classes
 'Show.8 SlideShow.8 Show.12 SlideShow.12 ShowMacroEnabled.12 SlideShowMacroEnabled.12'.Split() |% {
