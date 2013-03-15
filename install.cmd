@@ -17,7 +17,9 @@ set "install_dir=%USERPROFILE%\.%short_name%\"
 
 if exist "%install_dir%uninstall.cmd" (
     echo Uninstalling previous version...
+    pushd %install_dir% 
     call %install_dir%uninstall.cmd 2>nul
+    popd
     set "reinstall=1"
     title %product_name% Setup Program
     pause
