@@ -9,7 +9,7 @@ set "install_dir=%~dp0"
 if exist "%install_dir%version.txt" (
     set /p version=<"%install_dir%version.txt"
 )
-set "version=38"
+set "version=39"
 
 setlocal DisableDelayedExpansion
 
@@ -30,7 +30,9 @@ set "install_dir=%USERPROFILE%\.%short_name%\"
 
 if exist "%install_dir%uninstall.cmd" (
     echo Uninstalling previous version...
+    pushd %install_dir% 
     call %install_dir%uninstall.cmd 2>nul
+    popd
     set "reinstall=1"
     title %product_name% Setup Program
     pause
@@ -364,6 +366,6 @@ del %TEMP%\%installer_name%
 ::end update.cmd
 
 ::begin version.txt
-38
+39
 
 ::end version.txt
