@@ -72,7 +72,7 @@ function Convert-Presentation($pfilename, $slideShowFileName) {
         $rasterizedPdfFileName = "$path\$name - rasterized.pdf"
     }
     if (($env:temp) -and (Test-Path $env:temp)) {
-        $slidesPath = "$env:temp\PhotoAlbumSlides"
+        $slidesPath = "$env:temp\PhotoAlbumSlides$name"
     } else {
         $slidesPath = "$path\PhotoAlbumSlides"
     }
@@ -89,6 +89,9 @@ function Convert-Presentation($pfilename, $slideShowFileName) {
             $photoAlbum = $application.Presentations.Add($true)
             try {
                 $photoAlbum.PageSetup.SlideSize = $presentation.PageSetup.SlideSize
+                $photoAlbum.PageSetup.SlideOrientation = $presentation.PageSetup.SlideOrientation
+                $photoAlbum.PageSetup.SlideWidth = $presentation.PageSetup.SlideWidth
+                $photoAlbum.PageSetup.SlideHeight = $presentation.PageSetup.SlideHeight
                 foreach ($original_slide in $presentation.Slides) {
                     $i = $original_slide.SlideIndex
                     Write-Host "Processing slide $i"
@@ -127,3 +130,4 @@ try {
     Write-Host "http://github.com/utapyngo/pptrasterizer/issues"
     cmd /c pause | Out-Null
 }
+
